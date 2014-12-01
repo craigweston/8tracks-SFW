@@ -5,10 +5,6 @@
     "description": "Hides playlist pictures on 8tracks",
     "version": "1.0",
 
-    "background": {
-        "scripts": [ "background.js" ]
-    },
-
     "content_scripts": [{
         "matches": [ "http://8tracks.com/*" ],
         "js": [ "jquery-1.11.1.min.js", "content.js" ],
