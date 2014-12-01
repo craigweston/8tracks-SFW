@@ -14,6 +14,8 @@ function showAww(img) {
 
     var $img = $(img);
 
+    $img.hide();
+
     if(!$img.data('aww')) {
 
         $(img).data('aww', true);
@@ -23,7 +25,9 @@ function showAww(img) {
             if(posts) {
                 var idx = Math.floor((Math.random() * posts.length) + 1);
                 var url = posts[idx].data.url;
-                $img.attr('src', url).show();
+
+                $img.attr('src', url);
+                $img.show();
             }
         });
     }
