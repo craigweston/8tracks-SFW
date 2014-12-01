@@ -23,11 +23,18 @@ function showAww(img) {
         $.getJSON( "http://www.reddit.com/r/aww/new.json?sort=new", function(response) {
             var posts = response.data.children
             if(posts) {
-                var idx = Math.floor((Math.random() * posts.length) + 1);
-                var url = posts[idx].data.url;
-
-                $img.attr('src', url);
-                $img.show();
+                var idx = Math.floor((Math.random() * posts.length));
+                var post = posts[idx];
+                if(post) {
+                    var data = post.data;
+                    if(post.data) {
+                        $img.error(function() {
+                            $(this).hide(); // hide if image fails
+                        });
+                        $img.attr('src', data.url);
+                        $img.show();
+                    }
+                }
             }
         });
     }
