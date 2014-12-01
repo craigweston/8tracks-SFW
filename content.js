@@ -3,9 +3,30 @@ var forEach = Array.prototype.forEach;
 
 function run() {
 
-    $('.covers,.cover').hide();
+    $('.covers').hide();
+
+    showAww($('img.cover'));
 
     rebuildCreatorMixesList($('.sidebar_collection'));
+}
+
+function showAww(img) {
+
+    var $img = $(img);
+
+    if(!$img.data('aww')) {
+
+        $(img).data('aww', true);
+
+        $.getJSON( "http://www.reddit.com/r/aww/new.json?sort=new", function(response) {
+            var posts = response.data.children
+            if(posts) {
+                var idx = Math.floor((Math.random() * posts.length) + 1);
+                var url = posts[idx].data.url;
+                $img.attr('src', url).show();
+            }
+        });
+    }
 }
 
 function mixCreator(sidebarCollection) {
@@ -81,14 +102,11 @@ function trackPageChanges() {
 
                     if($(img).hasClass('cover')) {
                         if (!img.complete) {
-
-                            $(img).hide();
-
+                            showAww(img);
                         } else {
 
                             var onLoadImage = function (event) {
-                                console.log('loaded, hiding');
-                                $(img).hide();
+                                showAww(img);
                                 event.target.removeEventListener('load', onLoadImage);
                             };
 
