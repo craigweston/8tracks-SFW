@@ -3,7 +3,7 @@
 
     "name": "8tracks SFW",
     "description": "Hides playlist pictures on 8tracks",
-    "version": "1.0",
+    "version": "0.0.0.1",
 
     "content_scripts": [{
         "matches": [ "http://8tracks.com/*" ],
