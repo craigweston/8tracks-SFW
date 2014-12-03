@@ -16,7 +16,9 @@ function run() {
 
     $('.covers').hide();
 
-    showAww($('img.cover'));
+    $('img.cover').each(function() {
+        showAww($(this));
+    });
 
     rebuildCreatorMixesList($('.sidebar_collection'));
 }
