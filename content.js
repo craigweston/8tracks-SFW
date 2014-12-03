@@ -1,6 +1,17 @@
 
 var forEach = Array.prototype.forEach;
 
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
+var errors = [];
+var posts = null;
+
+var RAND_MAX_ATTEMPTS = 8;
+
 function run() {
 
     $('.covers').hide();
@@ -20,23 +31,50 @@ function showAww(img) {
 
         $(img).data('aww', true);
 
-        $.getJSON( "http://www.reddit.com/r/aww/new.json?sort=new", function(response) {
-            var posts = response.data.children
-            if(posts) {
-                var idx = Math.floor((Math.random() * posts.length));
-                var post = posts[idx];
-                if(post) {
-                    var data = post.data;
-                    if(post.data) {
-                        $img.error(function() {
-                            $(this).hide(); // hide if image fails
-                        });
-                        $img.attr('src', data.url);
-                        $img.show();
-                    }
+        if(!posts) {
+            var rAwwUrl = "http://www.reddit.com/r/aww/new.json?sort=new";
+            $.getJSON(rAwwUrl, function(response) {
+                var posts = response.data.children
+                if(posts) {
+                    processAwwPosts($img, posts);
                 }
+            });
+        } else {
+             processAwwPosts($img, posts);
+        }
+    }
+}
+
+function processAwwPosts($img, posts) {
+    var attempts = 0;
+
+    while(attempts < RAND_MAX_ATTEMPTS) {
+
+        var idx = Math.floor(Math.random() * posts.length);
+
+        var post = posts[idx];
+
+        if(post && post.data) {
+            var data = post.data;
+
+            if(!data.url.endsWith('.jpg') || -1 !== errors.indexOf(data.url)) {
+                continue;
             }
-        });
+
+            $img.error(function() {
+
+                $(this).hide(); // hide if image fails
+
+                errors.push(data.url); // track error images
+
+                showAww($img) // attempt to show new image
+            });
+
+            $img.attr('src', data.url);
+            $img.show();
+        }
+
+        ++attempts;
     }
 }
 
@@ -54,7 +92,7 @@ function mixCreator(sidebarCollection) {
 }
 
 function rebuildCreatorMixesList(sidebarCollection) {
-    console.log('rebuilding mixes by list');
+
     var $mixesByUl = $('<ul/>', { class: 'clear' });
 
     $(sidebarCollection).find('.mix').each(function() {
